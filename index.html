@@ -32,15 +32,13 @@
     }
 
     header {
-      background: var(--white);
+      background: transparent;
       color: var(--navy);
       padding: 18px 7%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      position: sticky;
-      top: 0;
       z-index: 10;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
     }
@@ -52,10 +50,11 @@
     }
 
     .logo img {
-      width: 130px;
+       width: 220px;
       height: auto;
       display: block;
       object-fit: contain;
+      mix-blend-mode: multiply;
     }
 
     nav {
@@ -309,7 +308,7 @@
       }
 
       .logo img {
-        width: 165px;
+        width: 195px;
       }
 
       nav {
@@ -342,7 +341,7 @@
 
   <header>
     <div class="logo">
-      <img src="new-logo.png" alt="Korviana Ventures LLP Logo" />
+      <img src="logo.png" alt="Korviana Ventures LLP Logo" />
     </div>
 
     <nav>
