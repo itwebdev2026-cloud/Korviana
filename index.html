@@ -542,6 +542,9 @@
     }
 
     applySavedPrices();
+    window.addEventListener("storage", (event) => {
+      if (event.key === "korvianaPrices") applySavedPrices();
+    });
     updateDateTime();
     setInterval(updateDateTime, 60000);
     document.getElementById("year").textContent = new Date().getFullYear();

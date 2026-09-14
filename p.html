@@ -155,7 +155,7 @@
       document.querySelectorAll("input[data-metal]").forEach((input) => { prices[input.dataset.metal][input.dataset.denomination] = input.value.trim() || "Updating soon"; });
       localStorage.setItem("korvianaPrices", JSON.stringify(prices));
       const saveButton = document.querySelector(".save");
-      document.getElementById("status").textContent = "Saved successfully. Prices are now updated on the Home page.";
+      document.getElementById("status").textContent = "Saved successfully. Refresh Home if it is open in another tab.";
       saveButton.textContent = "Saved successfully";
       setTimeout(() => { saveButton.textContent = "Save prices"; }, 2500);
     });
