@@ -148,6 +148,8 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 25px;
+      margin: 0 auto;
+      max-width: 900px;
     }
 
     .rate-card {
@@ -228,10 +230,14 @@
     }
 
     .tax-note {
+      grid-column: 1 / -1;
+      justify-self: center;
       text-align: center;
       color: var(--muted);
       font-size: 13px;
-      margin-top: 25px;
+      margin: 25px auto 0;
+      width: fit-content;
+      max-width: 100%;
       padding: 15px;
       background: #fffdf5;
       border: 1px solid #f0dfaa;
@@ -481,6 +487,7 @@
             </div>
           </div>
 
+        <p class="tax-note">Prices are inclusive of all taxes, including GST and other applicable taxes.</p>
       </div>
     </section>
 
