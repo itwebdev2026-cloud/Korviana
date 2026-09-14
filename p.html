@@ -21,6 +21,10 @@
     h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(38px, 6vw, 66px); font-weight: 400; line-height: 1.05; margin-top: 12px; }
     .intro p { color: var(--muted); margin-top: 16px; max-width: 620px; }
     .notice { background: #fffaf0; border: 1px solid #ead9a8; color: #66562e; font-size: 13px; margin-bottom: 28px; padding: 14px 16px; }
+    .auth-panel { background: var(--white); border-top: 4px solid var(--gold); box-shadow: 0 12px 30px rgba(16, 36, 62, 0.08); margin: 0 auto; max-width: 430px; padding: 30px; }
+    .auth-panel h2 { margin-bottom: 10px; }
+    .auth-panel p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+    .auth-panel input { margin-bottom: 12px; }
     .editor-grid { display: grid; gap: 22px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .panel { background: var(--white); border-top: 4px solid var(--gold); box-shadow: 0 12px 30px rgba(16, 36, 62, 0.08); padding: 28px; }
     .panel.silver { border-top-color: #8292a0; }
@@ -61,7 +65,18 @@
 
     <div class="notice">This is a browser-only admin panel with no login or server database. It is suitable for local updates, not secure multi-user administration.</div>
 
-    <form id="priceForm">
+    <section class="auth-panel" id="authPanel">
+      <h2 id="authTitle">Admin access</h2>
+      <p id="authDescription">Create a password for this browser to protect the price editor.</p>
+      <form id="authForm">
+        <input id="adminPassword" type="password" autocomplete="new-password" placeholder="Create password" minlength="6" required />
+        <input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Confirm password" minlength="6" required />
+        <button class="save" id="authButton" type="submit">Create password</button>
+        <p id="authStatus" role="status"></p>
+      </form>
+    </section>
+
+    <form id="priceForm" hidden>
       <section class="editor-grid" aria-label="Metal price editors">
         <div class="panel"><h2>Gold 999</h2><div id="goldFields"></div></div>
         <div class="panel silver"><h2>Silver 999</h2><div id="silverFields"></div></div>
@@ -74,10 +89,48 @@
   <footer>© <span id="year"></span> <strong>KorViana</strong>. All rights reserved.</footer>
 
   <script>
+    const passwordKey = "korvianaAdminPasswordHash";
     const defaultPrices = {
       Gold: { "1 Gram": "₹ 15,194", "5 Gram": "₹ 75,970", "10 Gram": "₹ 151,940", "20 Gram": "₹ 303,880", "50 Gram": "₹ 759,700", "100 Gram": "₹ 1,519,400" },
       Silver: { "10 Gram": "Updating soon", "50 Gram": "Updating soon", "100 Gram": "Updating soon", "250 Gram": "Updating soon", "500 Gram": "Updating soon", "1 Kilogram": "Updating soon" }
     };
+
+    async function hashPassword(password) {
+      const encoded = new TextEncoder().encode(password);
+      const digest = await crypto.subtle.digest("SHA-256", encoded);
+      return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    function unlockAdmin() {
+      document.getElementById("authPanel").hidden = true;
+      document.getElementById("priceForm").hidden = false;
+    }
+
+    async function authenticate(event) {
+      event.preventDefault();
+      const passwordInput = document.getElementById("adminPassword");
+      const confirmInput = document.getElementById("confirmPassword");
+      const authStatus = document.getElementById("authStatus");
+      if (!localStorage.getItem(passwordKey) && passwordInput.value !== confirmInput.value) {
+        authStatus.textContent = "Passwords do not match.";
+        return;
+      }
+      const passwordHash = await hashPassword(passwordInput.value);
+      const savedHash = localStorage.getItem(passwordKey);
+
+      if (!savedHash) {
+        localStorage.setItem(passwordKey, passwordHash);
+        unlockAdmin();
+        return;
+      }
+
+      if (passwordHash === savedHash) {
+        unlockAdmin();
+      } else {
+        authStatus.textContent = "Incorrect password.";
+        passwordInput.value = "";
+      }
+    }
 
     function loadPrices() {
       try { return JSON.parse(localStorage.getItem("korvianaPrices")) || defaultPrices; } catch { return defaultPrices; }
@@ -92,6 +145,7 @@
       });
     }
 
+    document.getElementById("authForm").addEventListener("submit", authenticate);
     document.getElementById("priceForm").addEventListener("submit", (event) => {
       event.preventDefault();
       const prices = { Gold: {}, Silver: {} };
