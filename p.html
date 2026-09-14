@@ -90,6 +90,7 @@
 
   <script>
     const passwordKey = "korvianaAdminPasswordHash";
+    const unlockKey = "korvianaAdminUnlocked";
     const defaultPrices = {
       Gold: { "1 Gram": "₹ 15,194", "5 Gram": "₹ 75,970", "10 Gram": "₹ 151,940", "20 Gram": "₹ 303,880", "50 Gram": "₹ 759,700", "100 Gram": "₹ 1,519,400" },
       Silver: { "10 Gram": "Updating soon", "50 Gram": "Updating soon", "100 Gram": "Updating soon", "250 Gram": "Updating soon", "500 Gram": "Updating soon", "1 Kilogram": "Updating soon" }
@@ -120,11 +121,13 @@
 
       if (!savedHash) {
         localStorage.setItem(passwordKey, passwordHash);
+        localStorage.setItem(unlockKey, "true");
         unlockAdmin();
         return;
       }
 
       if (passwordHash === savedHash) {
+        localStorage.setItem(unlockKey, "true");
         unlockAdmin();
       } else {
         authStatus.textContent = "Incorrect password.";
@@ -159,6 +162,7 @@
 
     document.getElementById("resetButton").addEventListener("click", () => { localStorage.removeItem("korvianaPrices"); renderFields(); document.getElementById("status").textContent = "Default prices restored."; });
     renderFields();
+    if (localStorage.getItem(passwordKey) && localStorage.getItem(unlockKey) === "true") unlockAdmin();
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
