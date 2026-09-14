@@ -366,7 +366,7 @@
       <div class="container">
         <div class="date-box">
           <strong>Rate Chart</strong>
-          <span id="currentDate">Date: 12 September 2026, 12:04 PM</span>
+          <span id="currentDate"></span>
         </div>
 
         <div class="rates-grid">
@@ -440,9 +440,26 @@
   </footer>
 
   <script>
-    const today = new Date();
+    function updateDateTime() {
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+      const formattedTime = now.toLocaleTimeString("en-IN", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      });
 
-    document.getElementById("year").textContent = today.getFullYear();
+      document.getElementById("currentDate").textContent =
+        `Date: ${formattedDate}, ${formattedTime}`;
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 
 </body>
