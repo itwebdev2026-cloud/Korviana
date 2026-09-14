@@ -93,7 +93,7 @@
     const unlockKey = "korvianaAdminUnlocked";
     const defaultPrices = {
       Gold: { "1 Gram": "₹ 15,194", "2 Gram": "₹ 30,388", "5 Gram": "₹ 75,970", "10 Gram": "₹ 151,940", "20 Gram": "₹ 303,880", "50 Gram": "₹ 759,700", "100 Gram": "₹ 1,519,400" },
-      Silver: { "2 Gram": "Updating soon", "10 Gram": "Updating soon", "50 Gram": "Updating soon", "100 Gram": "Updating soon", "250 Gram": "Updating soon", "500 Gram": "Updating soon", "1 Kilogram": "Updating soon" }
+      Silver: { "50 Gram": "Updating soon", "100 Gram": "Updating soon", "250 Gram": "Updating soon", "500 Gram": "Updating soon", "1 Kilogram": "Updating soon" }
     };
 
     async function hashPassword(password) {
@@ -141,7 +141,7 @@
         if (!savedPrices) return defaultPrices;
         return {
           Gold: { ...defaultPrices.Gold, ...(savedPrices.Gold || {}) },
-          Silver: { ...defaultPrices.Silver, ...(savedPrices.Silver || {}) }
+          Silver: Object.fromEntries(Object.entries({ ...defaultPrices.Silver, ...(savedPrices.Silver || {}) }).filter(([denomination]) => !["2 Gram", "5 Gram", "10 Gram"].includes(denomination)))
         };
       } catch { return defaultPrices; }
     }
