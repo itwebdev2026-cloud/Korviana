@@ -136,7 +136,14 @@
     }
 
     function loadPrices() {
-      try { return JSON.parse(localStorage.getItem("korvianaPrices")) || defaultPrices; } catch { return defaultPrices; }
+      try {
+        const savedPrices = JSON.parse(localStorage.getItem("korvianaPrices"));
+        if (!savedPrices) return defaultPrices;
+        return {
+          Gold: { ...defaultPrices.Gold, ...(savedPrices.Gold || {}) },
+          Silver: { ...defaultPrices.Silver, ...(savedPrices.Silver || {}) }
+        };
+      } catch { return defaultPrices; }
     }
 
     function renderFields() {
