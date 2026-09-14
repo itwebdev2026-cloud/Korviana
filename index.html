@@ -146,8 +146,7 @@
 
     .rates-grid {
       display: grid;
-      grid-template-columns: minmax(0, 560px);
-      justify-content: center;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 25px;
     }
 
@@ -444,7 +443,39 @@
               <h3>Silver</h3>
               <div class="metal-symbol"></div>
             </div>
-            <div class="updating-message">Prices updating soon</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Denomination</th>
+                    <th>Weight</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Silver Coin</td>
+                    <td>1 Gram</td>
+                    <td>Updating soon</td>
+                  </tr>
+                  <tr>
+                    <td>Silver Coin</td>
+                    <td>2 Gram</td>
+                    <td>Updating soon</td>
+                  </tr>
+                  <tr>
+                    <td>Silver Coin</td>
+                    <td>5 Gram</td>
+                    <td>Updating soon</td>
+                  </tr>
+                  <tr>
+                    <td>Silver Bar</td>
+                    <td>10 Gram</td>
+                    <td>Updating soon</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
       </div>
