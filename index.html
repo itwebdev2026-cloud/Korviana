@@ -279,6 +279,24 @@
       line-height: 1.8;
     }
 
+    .contact-details {
+      display: grid;
+      gap: 8px;
+      margin: 22px auto 0;
+      max-width: 360px;
+      text-align: left;
+    }
+
+    .contact-detail {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 90px 1fr;
+    }
+
+    .contact-detail strong {
+      text-align: left;
+    }
+
     .contact-button {
       display: inline-block;
       background: var(--gold);
@@ -422,12 +440,12 @@
       <div class="container">
         <div class="contact-box">
           <h2>Let's stay in touch.</h2>
-          <p>
-            Ward-10, North Town, Chumoukedima, Nagaland - 797103<br><br>
-            <strong>Email:</strong> korvianamail@gmail.com<br>
-            <strong>Contact:</strong> +91-6909307616<br>
-            <strong>Website:</strong> www.korviana.in
-          </p>
+          <p>Ward-10, North Town, Chumoukedima, Nagaland - 797103</p>
+          <div class="contact-details" aria-label="Korviana contact details">
+            <div class="contact-detail"><strong>Email:</strong><span>korvianamail@gmail.com</span></div>
+            <div class="contact-detail"><strong>Contact:</strong><span>+91-6909307616</span></div>
+            <div class="contact-detail"><strong>Website:</strong><span>www.korviana.in</span></div>
+          </div>
         </div>
       </div>
     </section>
