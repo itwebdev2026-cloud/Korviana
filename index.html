@@ -505,6 +505,25 @@
   </footer>
 
   <script>
+    function applySavedPrices() {
+      const savedPrices = localStorage.getItem("korvianaPrices");
+      if (!savedPrices) return;
+
+      try {
+        const prices = JSON.parse(savedPrices);
+        document.querySelectorAll(".rate-card").forEach((card) => {
+          const metal = card.querySelector("h3").textContent.startsWith("Gold") ? "Gold" : "Silver";
+          card.querySelectorAll("tbody tr").forEach((row) => {
+            const denomination = row.cells[0].textContent.trim();
+            const savedPrice = prices[metal]?.[denomination];
+            if (savedPrice !== undefined) row.cells[1].textContent = savedPrice;
+          });
+        });
+      } catch (error) {
+        console.error("Saved prices could not be loaded:", error);
+      }
+    }
+
     function updateDateTime() {
       const now = new Date();
       const formattedDate = now.toLocaleDateString("en-IN", {
@@ -522,6 +541,7 @@
         `Date: ${formattedDate}, ${formattedTime}`;
     }
 
+    applySavedPrices();
     updateDateTime();
     setInterval(updateDateTime, 60000);
     document.getElementById("year").textContent = new Date().getFullYear();
