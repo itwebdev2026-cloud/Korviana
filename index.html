@@ -1,0 +1,543 @@
+<!-- ===================================================================
+     KorViana Precious Metal Rate Chart — Zoho Sites embed snippet
+     HOW TO USE:
+     1. In Zoho Sites editor, drag a "Code" / "HTML" element onto the page.
+     2. Paste this ENTIRE snippet into that code block (it includes its
+        own <style>, so no other setup is needed).
+     3. Save & publish. All class names are prefixed "kv-" so they will
+        not clash with Zoho's own theme styles.
+     4. To change the date or prices, just edit the text inside the
+        marked spots below — search for "EDIT:" comments.
+=================================================================== -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  .kv-wrap, .kv-wrap *{box-sizing:border-box;}
+  .kv-wrap{
+    --kv-navy:#0f2a52;
+    --kv-navy-deep:#081a34;
+    --kv-gold:#c9932c;
+    --kv-gold-deep:#a4741c;
+    --kv-gold-pale:#f6e6bf;
+    --kv-cream:#fbf6ea;
+    --kv-silver:#6b7480;
+    --kv-silver-deep:#4a525c;
+    --kv-silver-pale:#e7ebee;
+    --kv-ink:#1c2430;
+    --kv-rule:#e3d4a8;
+
+    font-family:'Inter',Arial,sans-serif;
+    color:var(--kv-ink);
+    display:flex;
+    justify-content:center;
+    padding:36px 14px;
+    background:var(--kv-cream);
+    margin:0;
+  }
+
+  .kv-sheet{
+    width:100%;
+    max-width:960px;
+    background:#fffdf8;
+    border:1px solid var(--kv-rule);
+    border-radius:4px;
+    overflow:hidden;
+    box-shadow:0 24px 60px rgba(15,42,82,0.14);
+  }
+
+  /* ---------- Header ---------- */
+  .kv-header{
+    position:relative;
+    padding:30px 40px 22px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    overflow:hidden;
+  }
+
+  .kv-header::before{
+    content:"";
+    position:absolute;
+    top:0; right:0;
+    width:46%;
+    height:100%;
+    background:linear-gradient(120deg, var(--kv-gold) 0%, var(--kv-gold-deep) 35%, var(--kv-navy-deep) 55%, var(--kv-navy) 100%);
+    clip-path:polygon(38% 0, 100% 0, 100% 100%, 0% 100%);
+    opacity:0.97;
+  }
+
+  .kv-brandmark{ position:relative; z-index:1; }
+
+  .kv-brand-name{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:800;
+    font-size:34px;
+    color:var(--kv-navy);
+    letter-spacing:0.01em;
+    line-height:1.1;
+  }
+
+  .kv-brand-sub{
+    margin-top:4px;
+    font-size:12px;
+    letter-spacing:0.14em;
+    color:var(--kv-gold-deep);
+    font-weight:600;
+  }
+
+  .kv-brand-tag{
+    margin-top:2px;
+    font-size:10.5px;
+    letter-spacing:0.06em;
+    color:#8a8f98;
+  }
+
+  .kv-header-mid{
+    position:relative;
+    z-index:1;
+    text-align:center;
+    padding-top:6px;
+    border-left:1px solid var(--kv-rule);
+    border-right:1px solid var(--kv-rule);
+    padding-left:26px;
+    padding-right:26px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--kv-gold-deep);
+    line-height:1.9;
+  }
+
+  .kv-header-corner{
+    position:relative;
+    z-index:1;
+    color:#fff;
+    font-family:'Playfair Display',Georgia,serif;
+    font-style:italic;
+    font-size:16px;
+    line-height:1.35;
+    max-width:210px;
+    text-align:right;
+    padding-top:10px;
+  }
+
+  /* ---------- Title ---------- */
+  .kv-titleblock{ text-align:center; padding:6px 20px 20px; }
+
+  .kv-titleblock h1{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:800;
+    font-size:40px;
+    color:var(--kv-navy);
+    letter-spacing:0.01em;
+    margin:0;
+  }
+
+  .kv-titleblock .kv-sub{
+    margin-top:8px;
+    font-size:13px;
+    letter-spacing:0.2em;
+    color:var(--kv-gold-deep);
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+  }
+
+  .kv-titleblock .kv-sub .kv-line{
+    width:38px;
+    height:1px;
+    background:var(--kv-gold-deep);
+    display:inline-block;
+  }
+
+  /* ---------- Date bar ---------- */
+  .kv-datebar{
+    margin:0 32px 24px;
+    border:1px solid var(--kv-gold);
+    border-radius:30px;
+    padding:12px 26px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+    font-size:14px;
+  }
+
+  .kv-datebar .kv-today{
+    font-weight:700;
+    color:var(--kv-navy);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .kv-datebar .kv-today .kv-icon{
+    width:16px;height:16px;
+    border:2px solid var(--kv-navy);
+    border-radius:2px;
+    position:relative;
+    display:inline-block;
+  }
+  .kv-datebar .kv-today .kv-icon::before{
+    content:"";
+    position:absolute;
+    top:-4px; left:2px;
+    width:2px; height:5px;
+    background:var(--kv-navy);
+    box-shadow:8px 0 0 var(--kv-navy);
+  }
+
+  .kv-datebar .kv-note{ color:#6a6f78; font-size:13px; }
+
+  /* ---------- Metal columns ---------- */
+  .kv-metals{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    padding:0 32px 20px;
+  }
+
+  .kv-metal-card{
+    border:1px solid var(--kv-rule);
+    border-radius:6px;
+    overflow:hidden;
+  }
+
+  .kv-metal-head{
+    padding:20px 22px 18px;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+
+  .kv-gold-head{ background:linear-gradient(120deg, var(--kv-gold-deep), var(--kv-gold) 60%, #e0b654); }
+  .kv-silver-head{ background:linear-gradient(120deg, var(--kv-silver-deep), var(--kv-silver) 60%, #99a2ac); }
+
+  .kv-metal-mark{
+    width:52px; height:52px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.18);
+    border:1px solid rgba(255,255,255,0.5);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:700;
+    font-size:20px;
+    flex-shrink:0;
+  }
+
+  .kv-metal-title h2{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:26px;
+    font-weight:800;
+    line-height:1.1;
+    margin:0;
+  }
+
+  .kv-metal-title .kv-today-rate-label{
+    margin-top:4px;
+    font-size:10.5px;
+    letter-spacing:0.16em;
+    opacity:0.9;
+  }
+
+  .kv-rate-box{
+    margin:-2px 22px 20px;
+    background:rgba(255,255,255,0.9);
+    border-radius:6px;
+    text-align:center;
+    padding:12px 10px 10px;
+  }
+
+  .kv-rate-figure{
+    font-family:'Playfair Display',Georgia,serif;
+    font-weight:800;
+    font-size:30px;
+    color:var(--kv-navy);
+  }
+
+  .kv-rate-caption{
+    font-size:11px;
+    color:#8a8f98;
+    margin-top:2px;
+    letter-spacing:0.04em;
+  }
+
+  .kv-denoms{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14.5px;
+  }
+
+  .kv-denoms thead th{
+    background:var(--kv-gold-pale);
+    color:var(--kv-navy);
+    font-weight:700;
+    padding:10px 14px;
+    text-align:center;
+    border-top:1px solid var(--kv-rule);
+  }
+
+  .kv-silver-card .kv-denoms thead th{ background:var(--kv-silver-pale); }
+
+  .kv-denoms tbody td{
+    padding:10px 14px;
+    text-align:center;
+    border-top:1px solid #f1e9d3;
+  }
+
+  .kv-silver-card .kv-denoms tbody td{ border-top:1px solid #e5e9ec; }
+
+  .kv-denoms tbody td:first-child{ color:#3a4150; }
+
+  .kv-denoms tbody td:last-child{ font-weight:700; color:var(--kv-navy); }
+
+  .kv-denoms tbody tr:nth-child(odd){ background:#fdf9ef; }
+  .kv-silver-card .kv-denoms tbody tr:nth-child(odd){ background:#f7f8fa; }
+
+  /* ---------- Features ---------- */
+  .kv-features{
+    margin:6px 32px 24px;
+    border:1px solid var(--kv-rule);
+    border-radius:30px;
+    padding:18px 24px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+  }
+
+  .kv-feature{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:12.5px;
+    color:var(--kv-navy);
+    font-weight:600;
+    border-right:1px solid var(--kv-rule);
+    padding-right:12px;
+  }
+
+  .kv-feature:last-child{ border-right:none; }
+
+  .kv-feature .kv-ficon{
+    width:38px; height:38px;
+    border-radius:50%;
+    border:2px solid var(--kv-gold);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    color:var(--kv-gold-deep);
+    font-size:16px;
+  }
+
+  .kv-feature small{
+    display:block;
+    font-weight:400;
+    color:#8a8f98;
+    margin-top:2px;
+  }
+
+  /* ---------- Footer ---------- */
+  .kv-footer{
+    border-top:1px solid var(--kv-rule);
+    padding:20px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+
+  .kv-footer-brand .kv-brand-name{ font-size:22px; }
+  .kv-footer-brand .kv-brand-sub{ font-size:9.5px; }
+
+  .kv-footer-contact{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    font-size:13px;
+    color:var(--kv-navy);
+  }
+
+  .kv-footer-contact div{ display:flex; align-items:center; gap:8px; }
+
+  .kv-footer-contact .kv-dot{
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--kv-gold);
+    flex-shrink:0;
+  }
+
+  .kv-footer-motto{
+    text-align:right;
+    font-size:11px;
+    letter-spacing:0.1em;
+    color:var(--kv-gold-deep);
+    font-weight:700;
+    line-height:1.6;
+  }
+
+  .kv-bottombar{
+    background:var(--kv-navy-deep);
+    color:#cdd6e2;
+    font-size:11px;
+    padding:12px 32px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .kv-bottombar .kv-right{
+    letter-spacing:0.12em;
+    color:var(--kv-gold-pale);
+    font-weight:600;
+  }
+
+  @media (max-width:640px){
+    .kv-header{ flex-direction:column; gap:16px; }
+    .kv-header::before{ display:none; }
+    .kv-header-mid{ border:none; padding:0; text-align:left; }
+    .kv-header-corner{ text-align:left; max-width:none; }
+    .kv-metals{ grid-template-columns:1fr; }
+    .kv-features{ grid-template-columns:1fr 1fr; }
+    .kv-feature{ border-right:none; }
+    .kv-footer{ flex-direction:column; align-items:flex-start; }
+    .kv-footer-motto{ text-align:left; }
+  }
+</style>
+
+<div class="kv-wrap">
+<div class="kv-sheet">
+
+  <div class="kv-header">
+    <div class="kv-brandmark">
+      <div class="kv-brand-name">Korviana</div>
+      <div class="kv-brand-sub">WELFARE SOCIETY</div>
+      <div class="kv-brand-tag">SERVING HUMANITY WITH DIGNITY</div>
+    </div>
+    <div class="kv-header-mid">
+      PRECIOUS<br>PEOPLE<br>BRIGHTER<br>TOMORROWS
+    </div>
+    <div class="kv-header-corner">
+      More than Precious Metals&hellip;<br>A Brighter Tomorrow
+    </div>
+  </div>
+
+  <div class="kv-titleblock">
+    <h1>Precious Metal Rate Chart</h1>
+    <div class="kv-sub"><span class="kv-line"></span> PURE TODAY &bull; SECURE TOMORROW <span class="kv-line"></span></div>
+  </div>
+
+  <!-- EDIT: date and tax note -->
+  <div class="kv-datebar">
+    <div class="kv-today"><span class="kv-icon"></span> Today&rsquo;s Rate: 28 July 2026</div>
+    <div class="kv-note">Inclusive of all taxes (GST and other applicable taxes)</div>
+  </div>
+
+  <div class="kv-metals">
+
+    <div class="kv-metal-card kv-gold-card">
+      <div class="kv-metal-head kv-gold-head">
+        <div class="kv-metal-mark">Au</div>
+        <div class="kv-metal-title">
+          <h2>Gold 999</h2>
+          <div class="kv-today-rate-label">TODAY&rsquo;S RATE</div>
+        </div>
+      </div>
+      <!-- EDIT: gold per-gram headline rate -->
+      <div class="kv-rate-box">
+        <div class="kv-rate-figure">&#8377; 9,200</div>
+        <div class="kv-rate-caption">(Inclusive of all taxes)</div>
+      </div>
+      <!-- EDIT: gold denomination table -->
+      <table class="kv-denoms">
+        <thead>
+          <tr><th>Denomination<br>(Weight)</th><th>Price (&#8377;)<br>(Inclusive of all taxes)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1 Gram</td><td>9,200</td></tr>
+          <tr><td>5 Gram</td><td>46,000</td></tr>
+          <tr><td>10 Gram</td><td>92,000</td></tr>
+          <tr><td>50 Gram</td><td>4,60,000</td></tr>
+          <tr><td>100 Gram</td><td>9,20,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="kv-metal-card kv-silver-card">
+      <div class="kv-metal-head kv-silver-head">
+        <div class="kv-metal-mark">Ag</div>
+        <div class="kv-metal-title">
+          <h2>Silver 999</h2>
+          <div class="kv-today-rate-label">TODAY&rsquo;S RATE</div>
+        </div>
+      </div>
+      <!-- EDIT: silver per-gram headline rate -->
+      <div class="kv-rate-box">
+        <div class="kv-rate-figure">&#8377; 110</div>
+        <div class="kv-rate-caption">(Inclusive of all taxes)</div>
+      </div>
+      <!-- EDIT: silver denomination table -->
+      <table class="kv-denoms">
+        <thead>
+          <tr><th>Denomination<br>(Weight)</th><th>Price (&#8377;)<br>(Inclusive of all taxes)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>10 Gram</td><td>1,100</td></tr>
+          <tr><td>50 Gram</td><td>5,500</td></tr>
+          <tr><td>100 Gram</td><td>11,000</td></tr>
+          <tr><td>200 Gram</td><td>22,000</td></tr>
+          <tr><td>500 Gram</td><td>55,000</td></tr>
+          <tr><td>1 Kilogram</td><td>1,10,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="kv-features">
+    <div class="kv-feature">
+      <div class="kv-ficon">&#10003;</div>
+      <div>100% Pure<br><small>Gold 999 &amp; Silver 999</small></div>
+    </div>
+    <div class="kv-feature">
+      <div class="kv-ficon">&#8377;</div>
+      <div>Prices are Inclusive of All Taxes<br><small>GST and other applicable taxes</small></div>
+    </div>
+    <div class="kv-feature">
+      <div class="kv-ficon">&#9776;</div>
+      <div>Transparent<br><small>and Fair Pricing</small></div>
+    </div>
+    <div class="kv-feature">
+      <div class="kv-ficon">&#128101;</div>
+      <div>A Trusted<br><small>Community Initiative</small></div>
+    </div>
+  </div>
+
+  <div class="kv-footer">
+    <div class="kv-footer-brand">
+      <div class="kv-brand-name">Korviana</div>
+      <div class="kv-brand-sub">WELFARE SOCIETY</div>
+    </div>
+    <div class="kv-footer-contact">
+      <div><span class="kv-dot"></span> Ward-10, North Town, Chumoukedima, Nagaland &ndash; 797103</div>
+      <div><span class="kv-dot"></span> +91-6909307616</div>
+      <div><span class="kv-dot"></span> korvianamail@gmail.com &nbsp;&nbsp; www.korviana.in</div>
+    </div>
+    <div class="kv-footer-motto">INVEST IN<br>WHAT TRULY MATTERS</div>
+  </div>
+
+  <div class="kv-bottombar">
+    <div>Rates are subject to change without prior notice due to market conditions.<br>Please confirm the latest rates before making a purchase.</div>
+    <div class="kv-right">SERVING HUMANITY WITH DIGNITY</div>
+  </div>
+
+</div>
+</div>
