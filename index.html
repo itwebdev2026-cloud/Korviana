@@ -544,15 +544,12 @@
         const response = await fetch(`rates.json?v=${Date.now()}`, { cache: "no-store" });
         if (!response.ok) throw new Error(`Rates request failed: ${response.status}`);
         const prices = await response.json();
-        const localPrices = JSON.parse(localStorage.getItem("korvianaPrices") || "null");
         document.querySelectorAll(".rate-card").forEach((card) => {
           const metal = card.querySelector("h3").textContent.startsWith("Gold") ? "Gold" : "Silver";
           card.querySelectorAll("tbody tr").forEach((row) => {
             const denomination = row.cells[0].textContent.trim();
             const sharedPrice = prices[metal]?.[denomination];
-            const localPrice = localPrices?.[metal]?.[denomination];
-            const price = localPrice && localPrice !== "Updating soon" ? localPrice : sharedPrice;
-            if (price !== undefined) row.cells[1].textContent = price;
+            if (sharedPrice !== undefined) row.cells[1].textContent = sharedPrice;
           });
         });
       } catch (error) {
@@ -578,9 +575,6 @@
     }
 
     applySavedPrices();
-    window.addEventListener("storage", (event) => {
-      if (event.key === "korvianaPrices") applySavedPrices();
-    });
     updateDateTime();
     setInterval(updateDateTime, 60000);
     document.getElementById("year").textContent = new Date().getFullYear();
