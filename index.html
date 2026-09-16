@@ -541,9 +541,15 @@
   <script>
     async function applySavedPrices() {
       try {
-        const response = await fetch(`rates.json?v=${Date.now()}`, { cache: "no-store" });
-        if (!response.ok) throw new Error(`Rates request failed: ${response.status}`);
-        const prices = await response.json();
+        const localPrices = localStorage.getItem("korvianaPrices");
+        let prices;
+        if (localPrices) {
+          prices = JSON.parse(localPrices);
+        } else {
+          const response = await fetch(`rates.json?v=${Date.now()}`, { cache: "no-store" });
+          if (!response.ok) throw new Error(`Rates request failed: ${response.status}`);
+          prices = await response.json();
+        }
         document.querySelectorAll(".rate-card").forEach((card) => {
           const metal = card.querySelector("h3").textContent.startsWith("Gold") ? "Gold" : "Silver";
           card.querySelectorAll("tbody tr").forEach((row) => {
@@ -575,6 +581,9 @@
     }
 
     applySavedPrices();
+    window.addEventListener("storage", (event) => {
+      if (event.key === "korvianaPrices") applySavedPrices();
+    });
     updateDateTime();
     setInterval(updateDateTime, 60000);
     document.getElementById("year").textContent = new Date().getFullYear();
