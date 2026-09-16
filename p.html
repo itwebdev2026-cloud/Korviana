@@ -41,7 +41,18 @@
     #status { color: #39704d; font-size: 14px; margin-top: 16px; min-height: 21px; }
     footer { background: #091a2e; color: #bfcbd8; font-size: 13px; padding: 25px; text-align: center; }
     footer strong { color: #e2bc68; }
-    @media (max-width: 700px) { header { flex-direction: column; gap: 14px; padding: 16px 20px; } .logo img { width: 195px; } nav { flex-wrap: wrap; gap: 12px 17px; justify-content: center; } .editor-grid { grid-template-columns: 1fr; } main { padding-left: 16px; padding-right: 16px; } }
+    @media (max-width: 700px) {
+      header { flex-direction: column; gap: 14px; padding: 16px 20px; }
+      .logo img { width: min(195px, 75vw); }
+      nav { flex-wrap: wrap; gap: 10px 17px; justify-content: center; width: 100%; }
+      nav a { font-size: 12px; }
+      .editor-grid { grid-template-columns: 1fr; }
+      main { padding: 55px 16px 70px; }
+      .auth-panel, .panel { padding: 24px 18px; }
+      .field { gap: 10px; grid-template-columns: minmax(0, 1fr) 125px; }
+      .actions { flex-wrap: wrap; }
+      .actions button { flex: 1 1 150px; }
+    }
   </style>
 </head>
 <body>
@@ -81,7 +92,7 @@
         <div class="panel"><h2>Gold 999</h2><div id="goldFields"></div></div>
         <div class="panel silver"><h2>Silver 999</h2><div id="silverFields"></div></div>
       </section>
-      <div class="actions"><button class="save" type="submit">Save prices</button><button class="reset" id="resetButton" type="button">Reset defaults</button></div>
+      <div class="actions"><button class="save" type="submit">Save prices</button><button class="reset" id="resetButton" type="button">Reset defaults</button><button class="reset" id="downloadButton" type="button">Download rates.json</button></div>
       <p id="status" role="status"></p>
     </form>
   </main>
@@ -135,19 +146,20 @@
       }
     }
 
-    function loadPrices() {
+    async function loadPrices() {
       try {
-        const savedPrices = JSON.parse(localStorage.getItem("korvianaPrices"));
-        if (!savedPrices) return defaultPrices;
+        const response = await fetch(`rates.json?v=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Rates request failed: ${response.status}`);
+        const sharedPrices = await response.json();
         return {
-          Gold: { ...defaultPrices.Gold, ...(savedPrices.Gold || {}) },
-          Silver: Object.fromEntries(Object.entries({ ...defaultPrices.Silver, ...(savedPrices.Silver || {}) }).filter(([denomination]) => !["2 Gram", "5 Gram", "10 Gram"].includes(denomination)))
+          Gold: { ...defaultPrices.Gold, ...(sharedPrices.Gold || {}) },
+          Silver: Object.fromEntries(Object.entries({ ...defaultPrices.Silver, ...(sharedPrices.Silver || {}) }).filter(([denomination]) => !["2 Gram", "5 Gram", "10 Gram"].includes(denomination)))
         };
       } catch { return defaultPrices; }
     }
 
-    function renderFields() {
-      const prices = loadPrices();
+    async function renderFields() {
+      const prices = await loadPrices();
       ["Gold", "Silver"].forEach((metal) => {
         document.getElementById(`${metal.toLowerCase()}Fields`).innerHTML = Object.entries(prices[metal]).map(([denomination, price], index) => `
           <div class="field"><label for="${metal}-${index}">${denomination}</label><input id="${metal}-${index}" data-metal="${metal}" data-denomination="${denomination}" value="${price}" /></div>
@@ -162,12 +174,23 @@
       document.querySelectorAll("input[data-metal]").forEach((input) => { prices[input.dataset.metal][input.dataset.denomination] = input.value.trim() || "Updating soon"; });
       localStorage.setItem("korvianaPrices", JSON.stringify(prices));
       const saveButton = document.querySelector(".save");
-      document.getElementById("status").textContent = "Saved successfully. Refresh Home if it is open in another tab.";
+      document.getElementById("status").textContent = "Saved in this browser. Download rates.json and replace the GitHub file to publish it.";
       saveButton.textContent = "Saved successfully";
       setTimeout(() => { saveButton.textContent = "Save prices"; }, 2500);
     });
 
     document.getElementById("resetButton").addEventListener("click", () => { localStorage.removeItem("korvianaPrices"); renderFields(); document.getElementById("status").textContent = "Default prices restored."; });
+    document.getElementById("downloadButton").addEventListener("click", () => {
+      const prices = { Gold: {}, Silver: {} };
+      document.querySelectorAll("input[data-metal]").forEach((input) => { prices[input.dataset.metal][input.dataset.denomination] = input.value.trim() || "Updating soon"; });
+      const file = new Blob([`${JSON.stringify(prices, null, 2)}\n`], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(file);
+      link.download = "rates.json";
+      link.click();
+      URL.revokeObjectURL(link.href);
+      document.getElementById("status").textContent = "Downloaded. Replace rates.json in GitHub with this file.";
+    });
     renderFields();
     if (localStorage.getItem(passwordKey) && localStorage.getItem(unlockKey) === "true") unlockAdmin();
     document.getElementById("year").textContent = new Date().getFullYear();

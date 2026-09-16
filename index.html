@@ -339,17 +339,21 @@
       header {
         flex-direction: column;
         padding: 15px 5%;
+        gap: 12px;
       }
 
       .logo img {
-        width: 195px;
+        width: min(195px, 75vw);
       }
 
       nav {
-        gap: 15px;
+        gap: 10px 15px;
         flex-wrap: wrap;
         justify-content: center;
+        width: 100%;
       }
+
+      nav a { font-size: 13px; }
 
       .hero {
         padding: 55px 20px 80px;
@@ -365,8 +369,30 @@
         grid-template-columns: 1fr;
       }
 
+      .date-box {
+        width: 100%;
+        padding: 16px 18px;
+      }
+
+      .card-heading {
+        padding: 19px 18px;
+      }
+
+      .card-heading h3 {
+        font-size: 19px;
+      }
+
       th, td {
         padding: 14px 15px;
+      }
+
+      .contact-box {
+        padding: 30px 20px;
+      }
+
+      .contact-detail {
+        grid-template-columns: 78px minmax(0, 1fr);
+        overflow-wrap: anywhere;
       }
     }
   </style>
@@ -513,12 +539,11 @@
   </footer>
 
   <script>
-    function applySavedPrices() {
-      const savedPrices = localStorage.getItem("korvianaPrices");
-      if (!savedPrices) return;
-
+    async function applySavedPrices() {
       try {
-        const prices = JSON.parse(savedPrices);
+        const response = await fetch(`rates.json?v=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Rates request failed: ${response.status}`);
+        const prices = await response.json();
         document.querySelectorAll(".rate-card").forEach((card) => {
           const metal = card.querySelector("h3").textContent.startsWith("Gold") ? "Gold" : "Silver";
           card.querySelectorAll("tbody tr").forEach((row) => {
@@ -528,7 +553,7 @@
           });
         });
       } catch (error) {
-        console.error("Saved prices could not be loaded:", error);
+        console.error("Shared rates could not be loaded:", error);
       }
     }
 
@@ -550,9 +575,6 @@
     }
 
     applySavedPrices();
-    window.addEventListener("storage", (event) => {
-      if (event.key === "korvianaPrices") applySavedPrices();
-    });
     updateDateTime();
     setInterval(updateDateTime, 60000);
     document.getElementById("year").textContent = new Date().getFullYear();
