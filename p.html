@@ -7,40 +7,101 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>KorViana Admin</title>
   <style>
-    :root { --ink: #10243e; --muted: #657487; --gold: #c79932; --paper: #f5f7f8; --white: #fff; --line: #dce3e7; }
+    :root {
+      --ink: #10243e;
+      --muted: #657487;
+      --gold: #c79932;
+      --paper: #f5f7f8;
+      --white: #fff;
+      --line: #dce3e7;
+      --navy: #071b3a;
+      --shadow: rgba(16, 36, 62, 0.1);
+      --danger: #ba3b3b;
+      --success: #1c6d48;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--paper); color: var(--ink); font-family: Arial, Helvetica, sans-serif; line-height: 1.5; }
-    header { align-items: center; background: var(--white); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: 18px 7%; }
+    body {
+      background: linear-gradient(180deg, #f7f8fa 0%, #eef3f8 100%);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    header {
+      align-items: center;
+      background: rgba(255,255,255,0.9);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      padding: 18px 7%;
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(8px);
+      z-index: 20;
+    }
+
     .logo img { display: block; width: 220px; height: auto; }
     nav { display: flex; gap: 24px; }
     nav a { color: var(--ink); font-size: 13px; font-weight: 700; text-decoration: none; }
     nav a:hover, nav a[aria-current="page"] { color: var(--gold); }
-    main { margin: 0 auto; max-width: 980px; padding: 70px 24px 90px; }
+
+    main { margin: 0 auto; max-width: 1080px; padding: 70px 24px 90px; }
     .intro { margin-bottom: 35px; }
     .eyebrow { color: var(--gold); font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
     h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(38px, 6vw, 66px); font-weight: 400; line-height: 1.05; margin-top: 12px; }
     .intro p { color: var(--muted); margin-top: 16px; max-width: 620px; }
-    .notice { background: #fffaf0; border: 1px solid #ead9a8; color: #66562e; font-size: 13px; margin-bottom: 28px; padding: 14px 16px; }
-    .auth-panel { background: var(--white); border-top: 4px solid var(--gold); box-shadow: 0 12px 30px rgba(16, 36, 62, 0.08); margin: 0 auto; max-width: 430px; padding: 30px; }
-    .auth-panel h2 { margin-bottom: 10px; }
-    .auth-panel p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
-    .auth-panel input { margin-bottom: 12px; }
+    .notice {
+      background: linear-gradient(180deg, #fffaf0 0%, #fff3d6 100%);
+      border: 1px solid #ead9a8;
+      border-radius: 10px;
+      color: #66562e;
+      font-size: 13px;
+      margin-bottom: 28px;
+      padding: 14px 16px;
+    }
+
     .editor-grid { display: grid; gap: 22px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .panel { background: var(--white); border-top: 4px solid var(--gold); box-shadow: 0 12px 30px rgba(16, 36, 62, 0.08); padding: 28px; }
+    .panel {
+      background: var(--white);
+      border: 1px solid rgba(16,36,62,0.06);
+      border-radius: 14px;
+      border-top: 4px solid var(--gold);
+      box-shadow: 0 18px 35px rgba(16,36,62,0.08);
+      padding: 28px;
+    }
     .panel.silver { border-top-color: #8292a0; }
     h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 28px; font-weight: 400; margin-bottom: 22px; }
     .field { align-items: center; border-bottom: 1px solid var(--line); display: grid; gap: 14px; grid-template-columns: 1fr 150px; padding: 12px 0; }
     .field:last-child { border-bottom: 0; }
     label { font-weight: 700; }
-    input { border: 1px solid var(--line); border-radius: 4px; color: var(--ink); font: inherit; padding: 9px 10px; width: 100%; }
+    input {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+      font: inherit;
+      padding: 10px 12px;
+      width: 100%;
+      background: #fbfcfd;
+    }
     input:focus { border-color: var(--gold); outline: 2px solid rgba(199, 153, 50, 0.2); }
     .actions { display: flex; gap: 12px; margin-top: 30px; }
-    button { border: 0; border-radius: 4px; cursor: pointer; font: inherit; font-weight: 700; padding: 12px 20px; }
-    .save { background: var(--ink); color: var(--white); }
+    button {
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      padding: 12px 20px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    button:hover { opacity: 0.96; transform: translateY(-1px); }
+    .save { background: var(--navy); color: var(--white); }
     .reset { background: #e8edf0; color: var(--ink); }
-    #status { color: #39704d; font-size: 14px; margin-top: 16px; min-height: 21px; }
+    #status { color: var(--success); font-size: 14px; margin-top: 16px; min-height: 21px; }
     footer { background: #091a2e; color: #bfcbd8; font-size: 13px; padding: 25px; text-align: center; }
     footer strong { color: #e2bc68; }
+
     @media (max-width: 700px) {
       header { flex-direction: column; gap: 14px; padding: 16px 20px; }
       .logo img { width: min(195px, 75vw); }
@@ -48,7 +109,7 @@
       nav a { font-size: 12px; }
       .editor-grid { grid-template-columns: 1fr; }
       main { padding: 55px 16px 70px; }
-      .auth-panel, .panel { padding: 24px 18px; }
+      .panel { padding: 24px 18px; }
       .field { gap: 10px; grid-template-columns: minmax(0, 1fr) 125px; }
       .actions { flex-wrap: wrap; }
       .actions button { flex: 1 1 150px; }
@@ -71,28 +132,24 @@
     <section class="intro">
       <div class="eyebrow">Price management</div>
       <h1>Update today's rates.</h1>
-      <p>Enter the latest prices below. Saved values will appear on the Home page in this browser.</p>
+      <p>Enter the latest prices below. Saved values will be stored on the shared server so the public page can use them immediately.</p>
     </section>
 
-    <div class="notice">This is a browser-only admin panel with no login or server database. It is suitable for local updates, not secure multi-user administration.</div>
+    <div class="notice">This admin panel is protected by a session login and writes directly to the live server data file.</div>
 
-    <section class="auth-panel" id="authPanel">
-      <h2 id="authTitle">Admin access</h2>
-      <p id="authDescription">Create a password for this browser to protect the price editor.</p>
-      <form id="authForm">
-        <input id="adminPassword" type="password" autocomplete="new-password" placeholder="Create password" minlength="6" required />
-        <input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Confirm password" minlength="6" required />
-        <button class="save" id="authButton" type="submit">Create password</button>
-        <p id="authStatus" role="status"></p>
-      </form>
-    </section>
-
-    <form id="priceForm" hidden>
+    <form id="priceForm">
       <section class="editor-grid" aria-label="Metal price editors">
         <div class="panel"><h2>Gold 999</h2><div id="goldFields"></div></div>
         <div class="panel silver"><h2>Silver 999</h2><div id="silverFields"></div></div>
       </section>
-      <div class="actions"><button class="save" type="submit">Save prices</button><button class="reset" id="resetButton" type="button">Reset defaults</button><button class="reset" id="downloadButton" type="button">Download rates.json</button></div>
+
+      <div class="actions">
+        <button class="save" type="submit">Save prices</button>
+        <button class="reset" id="resetButton" type="button">Reset defaults</button>
+        <button class="reset" id="downloadButton" type="button">Download rates.json</button>
+        <button class="reset" id="logoutButton" type="button">Logout</button>
+      </div>
+
       <p id="status" role="status"></p>
     </form>
   </main>
@@ -100,100 +157,136 @@
   <footer>© <span id="year"></span> <strong>KorViana</strong>. All rights reserved.</footer>
 
   <script>
-    const passwordKey = "korvianaAdminPasswordHash";
-    const unlockKey = "korvianaAdminUnlocked";
     const defaultPrices = {
       Gold: { "1 Gram": "₹ 16,049.00", "2 Gram": "₹ 31,872.00", "5 Gram": "₹ 79,301.00", "10 Gram": "₹ 1,58,225.00", "50 Gram": "₹ 7,89,236.00", "100 Gram": "₹ 15,74,696.00" },
       Silver: { "50 Gram": "₹ 12,094.00", "100 Gram": "₹ 24,017.00", "200 Gram": "₹ 47,807.00", "500 Gram": "₹ 1,19,232.00", "1 Kilogram": "₹ 2,37,894.00" }
     };
 
-    async function hashPassword(password) {
-      const encoded = new TextEncoder().encode(password);
-      const digest = await crypto.subtle.digest("SHA-256", encoded);
-      return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+    async function checkSessionAndLoad() {
+      try {
+        const response = await fetch('/api/session', { cache: 'no-store' });
+        const data = await response.json();
+
+        if (!data.authenticated) {
+          window.location.href = '/admin';
+          return;
+        }
+
+        await renderFields();
+      } catch (error) {
+        console.error('Session check failed', error);
+        window.location.href = '/admin';
+      }
     }
 
-    function unlockAdmin() {
-      document.getElementById("authPanel").hidden = true;
-      document.getElementById("priceForm").hidden = false;
-    }
-
-    async function authenticate(event) {
-      event.preventDefault();
-      const passwordInput = document.getElementById("adminPassword");
-      const confirmInput = document.getElementById("confirmPassword");
-      const authStatus = document.getElementById("authStatus");
-      if (!localStorage.getItem(passwordKey) && passwordInput.value !== confirmInput.value) {
-        authStatus.textContent = "Passwords do not match.";
-        return;
-      }
-      const passwordHash = await hashPassword(passwordInput.value);
-      const savedHash = localStorage.getItem(passwordKey);
-
-      if (!savedHash) {
-        localStorage.setItem(passwordKey, passwordHash);
-        localStorage.setItem(unlockKey, "true");
-        unlockAdmin();
-        return;
-      }
-
-      if (passwordHash === savedHash) {
-        localStorage.setItem(unlockKey, "true");
-        unlockAdmin();
-      } else {
-        authStatus.textContent = "Incorrect password.";
-        passwordInput.value = "";
+    function getSavedPrices() {
+      try {
+        const saved = JSON.parse(localStorage.getItem('korvianaPrices') || 'null');
+        return saved && typeof saved === 'object' ? saved : {};
+      } catch {
+        return {};
       }
     }
 
     async function loadPrices() {
+      const savedPrices = getSavedPrices();
       try {
-        const response = await fetch(`rates.json?v=${Date.now()}`, { cache: "no-store" });
-        if (!response.ok) throw new Error(`Rates request failed: ${response.status}`);
+        const response = await fetch('/api/rates?t=' + Date.now(), { cache: 'no-store' });
+        if (!response.ok) throw new Error('Rates request failed');
         const sharedPrices = await response.json();
         return {
-          Gold: { ...defaultPrices.Gold, ...(sharedPrices.Gold || {}) },
-          Silver: Object.fromEntries(Object.entries({ ...defaultPrices.Silver, ...(sharedPrices.Silver || {}) }).filter(([denomination]) => !["2 Gram", "5 Gram", "10 Gram"].includes(denomination)))
+          Gold: { ...defaultPrices.Gold, ...(sharedPrices.Gold || {}), ...(savedPrices.Gold || {}) },
+          Silver: { ...defaultPrices.Silver, ...(sharedPrices.Silver || {}), ...(savedPrices.Silver || {}) }
         };
-      } catch { return defaultPrices; }
+      } catch {
+        return {
+          Gold: { ...defaultPrices.Gold, ...(savedPrices.Gold || {}) },
+          Silver: { ...defaultPrices.Silver, ...(savedPrices.Silver || {}) }
+        };
+      }
     }
 
     async function renderFields() {
       const prices = await loadPrices();
-      ["Gold", "Silver"].forEach((metal) => {
-        document.getElementById(`${metal.toLowerCase()}Fields`).innerHTML = Object.entries(prices[metal]).map(([denomination, price], index) => `
+      ['Gold', 'Silver'].forEach((metal) => {
+        const source = prices[metal];
+        const entries = Object.entries(source);
+        document.getElementById(`${metal.toLowerCase()}Fields`).innerHTML = entries.map(([denomination, price], index) => `
           <div class="field"><label for="${metal}-${index}">${denomination}</label><input id="${metal}-${index}" data-metal="${metal}" data-denomination="${denomination}" value="${price}" /></div>
-        `).join("");
+        `).join('');
       });
     }
 
-    document.getElementById("authForm").addEventListener("submit", authenticate);
-    document.getElementById("priceForm").addEventListener("submit", (event) => {
+    async function saveToServer(prices) {
+      const response = await fetch('/api/rates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(prices)
+      });
+      if (!response.ok) throw new Error('Failed to save rates');
+      return response.json();
+    }
+
+    document.getElementById('priceForm').addEventListener('submit', async (event) => {
       event.preventDefault();
       const prices = { Gold: {}, Silver: {} };
-      document.querySelectorAll("input[data-metal]").forEach((input) => { prices[input.dataset.metal][input.dataset.denomination] = input.value.trim() || "Updating soon"; });
-      localStorage.setItem("korvianaPrices", JSON.stringify(prices));
-      const saveButton = document.querySelector(".save");
-      document.getElementById("status").textContent = "Saved in this browser. Download rates.json and replace the GitHub file to publish it.";
-      saveButton.textContent = "Saved successfully";
-      setTimeout(() => { saveButton.textContent = "Save prices"; }, 2500);
+
+      document.querySelectorAll('input[data-metal]').forEach((input) => {
+        const metal = input.dataset.metal;
+        const denomination = input.dataset.denomination;
+        prices[metal][denomination] = input.value.trim() || 'Updating soon';
+      });
+
+      const saveButton = document.querySelector('.save');
+      try {
+        await saveToServer(prices);
+        localStorage.setItem('korvianaPrices', JSON.stringify(prices));
+        document.getElementById('status').textContent = 'Saved successfully. Redirecting to the public page...';
+        saveButton.textContent = 'Saved successfully';
+        setTimeout(() => {
+          saveButton.textContent = 'Save prices';
+          window.location.href = 'index.html';
+        }, 1200);
+      } catch (error) {
+        document.getElementById('status').textContent = 'Save failed. Please try again.';
+        console.error(error);
+      }
     });
 
-    document.getElementById("resetButton").addEventListener("click", () => { localStorage.removeItem("korvianaPrices"); renderFields(); document.getElementById("status").textContent = "Default prices restored."; });
-    document.getElementById("downloadButton").addEventListener("click", () => {
+    document.getElementById('resetButton').addEventListener('click', async () => {
+      localStorage.removeItem('korvianaPrices');
+      await saveToServer(defaultPrices);
+      document.getElementById('status').textContent = 'Default prices restored.';
+      await renderFields();
+    });
+
+    document.getElementById('downloadButton').addEventListener('click', () => {
       const prices = { Gold: {}, Silver: {} };
-      document.querySelectorAll("input[data-metal]").forEach((input) => { prices[input.dataset.metal][input.dataset.denomination] = input.value.trim() || "Updating soon"; });
-      const file = new Blob([`${JSON.stringify(prices, null, 2)}\n`], { type: "application/json" });
-      const link = document.createElement("a");
+      document.querySelectorAll('input[data-metal]').forEach((input) => {
+        const metal = input.dataset.metal;
+        const denomination = input.dataset.denomination;
+        prices[metal][denomination] = input.value.trim() || 'Updating soon';
+      });
+      const file = new Blob([`${JSON.stringify(prices, null, 2)}\n`], { type: 'application/json' });
+      const link = document.createElement('a');
       link.href = URL.createObjectURL(file);
-      link.download = "rates.json";
+      link.download = 'rates.json';
       link.click();
       URL.revokeObjectURL(link.href);
-      document.getElementById("status").textContent = "Downloaded. Replace rates.json in GitHub with this file.";
+      document.getElementById('status').textContent = 'Downloaded. Replace rates.json in GitHub with this file.';
     });
-    renderFields();
-    if (localStorage.getItem(passwordKey) && localStorage.getItem(unlockKey) === "true") unlockAdmin();
-    document.getElementById("year").textContent = new Date().getFullYear();
+
+    document.getElementById('logoutButton').addEventListener('click', async () => {
+      try {
+        await fetch('/api/logout', { method: 'POST' });
+      } catch (error) {
+        console.error('Logout failed', error);
+      }
+      window.location.href = '/admin';
+    });
+
+    checkSessionAndLoad();
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>

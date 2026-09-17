@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KorViana Admin Login</title>
+  <style>
+    :root {
+      --navy: #071b3a;
+      --gold: #d5a928;
+      --white: #fff;
+      --paper: #f4f6f9;
+      --text: #243044;
+      --muted: #697788;
+      --border: #e3e7ed;
+      --danger: #b43c3c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #071b3a, #102d58);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-box {
+      width: min(420px, 100%);
+      background: rgba(255,255,255,0.96);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+      padding: 32px 28px;
+    }
+    .brand {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+    .brand img {
+      width: 190px;
+      height: auto;
+      display: block;
+      margin: 0 auto 12px;
+    }
+    .brand h1 {
+      font-size: 26px;
+      color: var(--navy);
+      margin: 0;
+    }
+    form {
+      display: grid;
+      gap: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 15px;
+    }
+    button {
+      width: 100%;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .status {
+      color: var(--danger);
+      min-height: 20px;
+      font-size: 14px;
+      margin-top: 2px;
+    }
+    .meta {
+      margin-top: 16px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="brand">
+      <img src="logo.png" alt="KorViana Logo" />
+      <h1>Admin Login</h1>
+    </div>
+
+    <form id="loginForm">
+      <input id="username" type="text" placeholder="Username" autocomplete="username" required />
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password" required />
+      <button type="submit">Login</button>
+      <div id="status" class="status" role="status"></div>
+    </form>
+
+    <div class="meta">Use the configured admin credentials.</div>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          status.textContent = data.error || 'Login failed.';
+          return;
+        }
+
+        window.location.href = '/admin';
+      } catch (error) {
+        status.textContent = 'Login failed. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

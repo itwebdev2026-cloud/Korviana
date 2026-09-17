@@ -410,6 +410,7 @@
       <a href="about.html">About</a>
       <a href="index.html#contact">Contact</a>
       <a href="about.html#society">Community</a>
+      <a href="p.html">Admin</a>
     </nav>
   </header>
 
@@ -539,22 +540,31 @@
   </footer>
 
   <script>
-    async function applySavedPrices() {
+    async function fetchRates() {
       try {
-        const response = await fetch(`rates.json?v=${Date.now()}`, { cache: "no-store" });
-        if (!response.ok) throw new Error(`Rates request failed: ${response.status}`);
-        const prices = await response.json();
-        document.querySelectorAll(".rate-card").forEach((card) => {
-          const metal = card.querySelector("h3").textContent.startsWith("Gold") ? "Gold" : "Silver";
-          card.querySelectorAll("tbody tr").forEach((row) => {
-            const denomination = row.cells[0].textContent.trim();
-            const sharedPrice = prices[metal]?.[denomination];
-            if (sharedPrice !== undefined) row.cells[1].textContent = sharedPrice;
-          });
-        });
+        const response = await fetch('/api/rates?t=' + Date.now(), { cache: 'no-store' });
+        if (!response.ok) throw new Error('Rates request failed');
+        return await response.json();
       } catch (error) {
-        console.error("Shared rates could not be loaded:", error);
+        console.error('Could not load rates from server:', error);
+        return null;
       }
+    }
+
+    function renderRateCards(prices) {
+      document.querySelectorAll('.rate-card').forEach((card) => {
+        const metal = card.querySelector('h3').textContent.startsWith('Gold') ? 'Gold' : 'Silver';
+        card.querySelectorAll('tbody tr').forEach((row) => {
+          const denomination = row.cells[0].textContent.trim();
+          const value = prices?.[metal]?.[denomination];
+          if (value !== undefined) row.cells[1].textContent = value;
+        });
+      });
+    }
+
+    async function loadPrices() {
+      const prices = await fetchRates();
+      if (prices) renderRateCards(prices);
     }
 
     function updateDateTime() {
@@ -574,7 +584,8 @@
         `Date: ${formattedDate}, ${formattedTime}`;
     }
 
-    applySavedPrices();
+    loadPrices();
+    setInterval(loadPrices, 5000);
     updateDateTime();
     setInterval(updateDateTime, 60000);
     document.getElementById("year").textContent = new Date().getFullYear();
