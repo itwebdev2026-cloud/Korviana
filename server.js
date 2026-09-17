@@ -15,6 +15,21 @@ function hashPassword(value) {
 }
 
 app.use(express.json({ limit: '1mb' }));
+app.use((req, res, next) => {
+  const allowedOrigins = new Set([
+    'https://korviana.in',
+    'https://www.korviana.in',
+    'https://itwebdev2026-cloud.github.io',
+    'http://localhost:8000',
+    'http://localhost:3000'
+  ]);
+  const origin = req.headers.origin;
+  if (allowedOrigins.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  next();
+});
 app.use(session({
   secret: process.env.SESSION_SECRET || 'korviana-admin-secret',
   resave: false,

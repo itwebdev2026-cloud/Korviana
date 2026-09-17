@@ -540,9 +540,11 @@
   </footer>
 
   <script>
+    const ratesApiUrl = 'https://korviana-1.onrender.com/api/rates';
+
     async function fetchRates() {
       try {
-        const response = await fetch('/api/rates?t=' + Date.now(), { cache: 'no-store' });
+        const response = await fetch(ratesApiUrl + '?t=' + Date.now(), { cache: 'no-store' });
         if (!response.ok) throw new Error('Rates request failed');
         return await response.json();
       } catch (error) {
