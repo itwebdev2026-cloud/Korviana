@@ -80,9 +80,10 @@ app.post('/api/rates', requireAdmin, (req, res) => {
 
     const current = fs.existsSync(DATA_PATH)
       ? JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'))
-      : { Gold: {}, Silver: {} };
+      : { BaseRates: {}, Gold: {}, Silver: {} };
 
     const merged = {
+      BaseRates: { ...(current.BaseRates || {}), ...(incoming.BaseRates || {}) },
       Gold: { ...(current.Gold || {}), ...(incoming.Gold || {}) },
       Silver: { ...(current.Silver || {}), ...(incoming.Silver || {}) }
     };

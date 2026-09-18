@@ -69,6 +69,31 @@
       transition: color 0.3s ease;
     }
 
+    .nav-dropdown { position: relative; }
+    .nav-dropdown summary {
+      color: var(--navy);
+      cursor: pointer;
+      font-size: 14px;
+      list-style: none;
+    }
+    .nav-dropdown summary::-webkit-details-marker { display: none; }
+    .nav-dropdown summary::after { content: ' +'; }
+    .nav-dropdown[open] summary::after { content: ' -'; }
+    .nav-dropdown summary:hover { color: var(--gold-light); }
+    .nav-dropdown-menu {
+      background: white;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+      display: grid;
+      gap: 10px;
+      min-width: 130px;
+      padding: 14px;
+      position: absolute;
+      right: 0;
+      top: 24px;
+      z-index: 2;
+    }
+    .nav-dropdown-menu a { white-space: nowrap; }
+
     nav a:hover {
       color: var(--gold-light);
     }
@@ -409,7 +434,13 @@
       <a href="index.html#rates">Rates</a>
       <a href="about.html">About</a>
       <a href="index.html#contact">Contact</a>
-      <a href="about.html#society">Community</a>
+      <details class="nav-dropdown">
+        <summary>Porchure</summary>
+        <div class="nav-dropdown-menu">
+          <a href="index.html#rates">Purchase</a>
+          <a href="about.html#society">Associates</a>
+        </div>
+      </details>
       <a href="p.html">Admin</a>
     </nav>
   </header>

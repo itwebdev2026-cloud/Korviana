@@ -50,6 +50,32 @@
       font-weight: 700;
       text-decoration: none;
     }
+    .nav-dropdown { position: relative; }
+    .nav-dropdown summary {
+      color: var(--ink);
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      list-style: none;
+    }
+    .nav-dropdown summary::-webkit-details-marker { display: none; }
+    .nav-dropdown summary::after { content: ' +'; }
+    .nav-dropdown[open] summary::after { content: ' -'; }
+    .nav-dropdown summary:hover { color: var(--gold); }
+    .nav-dropdown-menu {
+      background: var(--white);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+      display: grid;
+      gap: 10px;
+      min-width: 130px;
+      padding: 14px;
+      position: absolute;
+      right: 0;
+      top: 24px;
+      z-index: 2;
+    }
+    .nav-dropdown-menu a { white-space: nowrap; }
     nav a:hover, nav a[aria-current="page"] { color: var(--gold); }
 
     main { overflow: hidden; }
@@ -147,7 +173,13 @@
       <a href="index.html#rates">Rates</a>
       <a href="about.html" aria-current="page">About</a>
       <a href="index.html#contact">Contact</a>
-      <a href="#society">Community</a>
+      <details class="nav-dropdown">
+        <summary>Porchure</summary>
+        <div class="nav-dropdown-menu">
+          <a href="index.html#rates">Purchase</a>
+          <a href="#society">Associates</a>
+        </div>
+      </details>
       <a href="p.html">Admin</a>
     </nav>
   </header>
@@ -164,8 +196,8 @@
         <article class="entity" id="society">
           <div class="entity-label">Public benefit</div>
           <h2>KorViana Welfare Society</h2>
-          <p>KorViana Welfare Society is a community-focused organisation based in Chumoukedima, Nagaland. It is committed to supporting people through practical welfare and development initiatives.</p>
-          <p style="margin-top: 18px;">The Society works in community welfare, healthcare support, education, livelihood development, women and youth empowerment, child welfare, financial awareness and other public-benefit activities. Its focus is helping individuals and families become more confident, capable and self-reliant while contributing to stronger, more resilient communities.</p>
+          <p>KorViana Welfare Society is a porchure-focused organisation based in Chumoukedima, Nagaland. It is committed to supporting people through practical welfare and development initiatives.</p>
+          <p style="margin-top: 18px;">The Society works in porchure welfare, healthcare support, education, livelihood development, women and youth empowerment, child welfare, financial awareness and other public-benefit activities. Its focus is helping individuals and families become more confident, capable and self-reliant while contributing to stronger, more resilient porchures.</p>
         </article>
 
         <article class="entity venture">

@@ -75,6 +75,20 @@
     .field { align-items: center; border-bottom: 1px solid var(--line); display: grid; gap: 14px; grid-template-columns: 1fr 150px; padding: 12px 0; }
     .field:last-child { border-bottom: 0; }
     label { font-weight: 700; }
+    .base-field { margin-bottom: 18px; }
+    .base-field label { display: block; margin-bottom: 8px; }
+    .calculated .field { color: var(--muted); }
+    .calculated input[readonly] { background: #f1f4f6; color: var(--ink); }
+    .calculation-note { color: var(--muted); font-size: 12px; margin: -10px 0 18px; }
+    .calculation-table-wrap { overflow-x: auto; }
+    .calculation-table { border-collapse: collapse; font-size: 12px; min-width: 600px; width: 100%; }
+    .calculation-table th,
+    .calculation-table td { border-bottom: 1px solid var(--line); padding: 11px 8px; text-align: right; white-space: nowrap; }
+    .calculation-table th { background: #f1f4f6; color: var(--muted); font-size: 11px; text-transform: uppercase; }
+    .calculation-table th:first-child,
+    .calculation-table td:first-child { text-align: left; }
+    .calculation-table td:last-child { color: var(--ink); font-weight: 700; }
+    .calculation-table tr:last-child td { border-bottom: 0; }
     input {
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -139,8 +153,24 @@
 
     <form id="priceForm">
       <section class="editor-grid" aria-label="Metal price editors">
-        <div class="panel"><h2>Gold 999</h2><div id="goldFields"></div></div>
-        <div class="panel silver"><h2>Silver 999</h2><div id="silverFields"></div></div>
+        <div class="panel">
+          <h2>Gold 999</h2>
+          <div class="base-field">
+            <label for="goldBaseRate">Base rate (10 grams)</label>
+            <input id="goldBaseRate" data-base-rate="Gold" inputmode="decimal" autocomplete="off" />
+          </div>
+          <p class="calculation-note">Final prices are calculated automatically using the workbook charge rates.</p>
+          <div class="calculation-table-wrap" id="goldFields"></div>
+        </div>
+        <div class="panel silver">
+          <h2>Silver 999</h2>
+          <div class="base-field">
+            <label for="silverBaseRate">Base rate (1 kilogram)</label>
+            <input id="silverBaseRate" data-base-rate="Silver" inputmode="decimal" autocomplete="off" />
+          </div>
+          <p class="calculation-note">Final prices are calculated automatically using the workbook charge rates.</p>
+          <div class="calculation-table-wrap" id="silverFields"></div>
+        </div>
       </section>
 
       <div class="actions">
@@ -157,9 +187,16 @@
   <footer>© <span id="year"></span> <strong>KorViana</strong>. All rights reserved.</footer>
 
   <script>
-    const defaultPrices = {
-      Gold: { "1 Gram": "₹ 16,049.00", "2 Gram": "₹ 31,872.00", "5 Gram": "₹ 79,301.00", "10 Gram": "₹ 1,58,225.00", "50 Gram": "₹ 7,89,236.00", "100 Gram": "₹ 15,74,696.00" },
-      Silver: { "50 Gram": "₹ 12,094.00", "100 Gram": "₹ 24,017.00", "200 Gram": "₹ 47,807.00", "500 Gram": "₹ 1,19,232.00", "1 Kilogram": "₹ 2,37,894.00" }
+    const defaultBaseRates = { Gold: 151050, Silver: 227650 };
+    const calculationRules = {
+      Gold: [
+        ['1 Gram', 0.1, 0.0625], ['2 Gram', 0.2, 0.055], ['5 Gram', 0.5, 0.05],
+        ['10 Gram', 1, 0.0475], ['50 Gram', 5, 0.045], ['100 Gram', 10, 0.0425]
+      ],
+      Silver: [
+        ['50 Gram', 0.05, 0.0625], ['100 Gram', 0.1, 0.055], ['200 Gram', 0.2, 0.05],
+        ['500 Gram', 0.5, 0.0475], ['1 Kilogram', 1, 0.045]
+      ]
     };
 
     async function checkSessionAndLoad() {
@@ -179,43 +216,70 @@
       }
     }
 
-    function getSavedPrices() {
-      try {
-        const saved = JSON.parse(localStorage.getItem('korvianaPrices') || 'null');
-        return saved && typeof saved === 'object' ? saved : {};
-      } catch {
-        return {};
-      }
-    }
-
-    async function loadPrices() {
-      const savedPrices = getSavedPrices();
+    async function loadRates() {
       try {
         const response = await fetch('/api/rates?t=' + Date.now(), { cache: 'no-store' });
         if (!response.ok) throw new Error('Rates request failed');
-        const sharedPrices = await response.json();
-        return {
-          Gold: { ...defaultPrices.Gold, ...(sharedPrices.Gold || {}), ...(savedPrices.Gold || {}) },
-          Silver: { ...defaultPrices.Silver, ...(sharedPrices.Silver || {}), ...(savedPrices.Silver || {}) }
-        };
+        return await response.json();
       } catch {
-        return {
-          Gold: { ...defaultPrices.Gold, ...(savedPrices.Gold || {}) },
-          Silver: { ...defaultPrices.Silver, ...(savedPrices.Silver || {}) }
-        };
+        return { BaseRates: { ...defaultBaseRates } };
       }
     }
 
-    async function renderFields() {
-      const prices = await loadPrices();
-      ['Gold', 'Silver'].forEach((metal) => {
-        const source = prices[metal];
-        const entries = Object.entries(source);
-        document.getElementById(`${metal.toLowerCase()}Fields`).innerHTML = entries.map(([denomination, price], index) => `
-          <div class="field"><label for="${metal}-${index}">${denomination}</label><input id="${metal}-${index}" data-metal="${metal}" data-denomination="${denomination}" value="${price}" /></div>
-        `).join('');
+    function formatPrice(value) {
+      return `₹ ${Math.round(value).toLocaleString('en-IN')}.00`;
+    }
+
+    function calculateRows(metal, baseRate) {
+      return calculationRules[metal].map(([denomination, multiplier, charge]) => {
+        const baseValue = baseRate * multiplier;
+        const makingCharge = baseValue * charge;
+        return {
+          denomination,
+          baseValue: formatPrice(baseValue),
+          chargeRate: `${(charge * 100).toFixed(2)}%`,
+          makingCharge: formatPrice(makingCharge),
+          finalPrice: formatPrice(baseValue + makingCharge)
+        };
       });
     }
+
+    function calculatePrices(metal, baseRate) {
+      return Object.fromEntries(calculateRows(metal, baseRate).map((row) => [row.denomination, row.finalPrice]));
+    }
+
+    function renderCalculatedFields(metal, baseRate) {
+      const rows = calculateRows(metal, baseRate);
+      document.getElementById(`${metal.toLowerCase()}Fields`).innerHTML = `
+        <table class="calculation-table">
+          <thead><tr><th>Denomination</th><th>Metal value</th><th>Charge %</th><th>Making charge</th><th>Final price</th></tr></thead>
+          <tbody>${rows.map((row) => `
+            <tr><td>${row.denomination}</td><td>${row.baseValue}</td><td>${row.chargeRate}</td><td>${row.makingCharge}</td><td>${row.finalPrice}</td></tr>
+          `).join('')}</tbody>
+        </table>`;
+    }
+
+    function getBaseRate(metal) {
+      const input = document.querySelector(`[data-base-rate="${metal}"]`);
+      const value = Number(input.value.replace(/[^0-9.]/g, ''));
+      return Number.isFinite(value) && value > 0 ? value : 0;
+    }
+
+    async function renderFields() {
+      const rates = await loadRates();
+      ['Gold', 'Silver'].forEach((metal) => {
+        const baseRate = Number(rates.BaseRates?.[metal]) || defaultBaseRates[metal];
+        document.querySelector(`[data-base-rate="${metal}"]`).value = baseRate.toLocaleString('en-IN');
+        renderCalculatedFields(metal, baseRate);
+      });
+    }
+
+    document.querySelectorAll('[data-base-rate]').forEach((input) => {
+      input.addEventListener('input', () => {
+        const metal = input.dataset.baseRate;
+        renderCalculatedFields(metal, getBaseRate(metal));
+      });
+    });
 
     async function saveToServer(prices) {
       const response = await fetch('/api/rates', {
@@ -229,18 +293,12 @@
 
     document.getElementById('priceForm').addEventListener('submit', async (event) => {
       event.preventDefault();
-      const prices = { Gold: {}, Silver: {} };
-
-      document.querySelectorAll('input[data-metal]').forEach((input) => {
-        const metal = input.dataset.metal;
-        const denomination = input.dataset.denomination;
-        prices[metal][denomination] = input.value.trim() || 'Updating soon';
-      });
+      const baseRates = { Gold: getBaseRate('Gold'), Silver: getBaseRate('Silver') };
+      const prices = { BaseRates: baseRates, Gold: calculatePrices('Gold', baseRates.Gold), Silver: calculatePrices('Silver', baseRates.Silver) };
 
       const saveButton = document.querySelector('.save');
       try {
         await saveToServer(prices);
-        localStorage.setItem('korvianaPrices', JSON.stringify(prices));
         document.getElementById('status').textContent = 'Saved successfully. Redirecting to the public page...';
         saveButton.textContent = 'Saved successfully';
         setTimeout(() => {
@@ -254,19 +312,14 @@
     });
 
     document.getElementById('resetButton').addEventListener('click', async () => {
-      localStorage.removeItem('korvianaPrices');
-      await saveToServer(defaultPrices);
+      await saveToServer({ BaseRates: defaultBaseRates, Gold: calculatePrices('Gold', defaultBaseRates.Gold), Silver: calculatePrices('Silver', defaultBaseRates.Silver) });
       document.getElementById('status').textContent = 'Default prices restored.';
       await renderFields();
     });
 
     document.getElementById('downloadButton').addEventListener('click', () => {
-      const prices = { Gold: {}, Silver: {} };
-      document.querySelectorAll('input[data-metal]').forEach((input) => {
-        const metal = input.dataset.metal;
-        const denomination = input.dataset.denomination;
-        prices[metal][denomination] = input.value.trim() || 'Updating soon';
-      });
+      const baseRates = { Gold: getBaseRate('Gold'), Silver: getBaseRate('Silver') };
+      const prices = { BaseRates: baseRates, Gold: calculatePrices('Gold', baseRates.Gold), Silver: calculatePrices('Silver', baseRates.Silver) };
       const file = new Blob([`${JSON.stringify(prices, null, 2)}\n`], { type: 'application/json' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(file);
